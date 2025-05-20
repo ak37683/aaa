@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Viral Clip Finder - Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <h1>Viral Clip Finder</h1>
+            <p>Upload a video to find potential viral clips!</p>
+
+            <input type="file" id="videoUpload" accept="video/*">
+            <button id="uploadButton">Analyze Video</button>
+
+            <p><a href="about.html">Learn more about us</a></p>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Viral Clip Finder</p>
+        </footer>
+    </div>
+
+    <script>
+        const videoUpload = document.getElementById('videoUpload');
+        const uploadButton = document.getElementById('uploadButton');
+
+        uploadButton.addEventListener('click', function() {
+            const file = videoUpload.files[0];
+            if (file) {
+                uploadVideo(file);
+            } else {
+                alert("Please select a video file.");
+            }
+        });
+
+        async function uploadVideo(file) {
+            const formData = new FormData();
+            formData.append('video', file);
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Redirect to the results page with the analysis data
+                    window.location.href = `results.html?clips=${encodeURIComponent(JSON.stringify(data.clips))}&videoName=${file.name}`;
+                } else {
+                    console.error('Error uploading video:', response.status);
+                    alert("Error analyzing video. Please try again.");
+                }
+            } catch (error) {
+                console.error('Error uploading video:', error);
+                alert("An error occurred. Please try again.");
+            }
+        }
+    </script>
+</body>
+</html>
