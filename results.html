@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Viral Clip Finder - Results</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <h1>Analysis Results</h1>
+
+            <video id="mainVideo" controls width="640"></video>
+
+            <div id="clipSuggestions">
+                <h2>Suggested Viral Clips</h2>
+                <!-- Clips will be dynamically added here -->
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Viral Clip Finder</p>
+        </footer>
+    </div>
+
+    <script>
+        const mainVideo = document.getElementById('mainVideo');
+        const clipSuggestions = document.getElementById('clipSuggestions');
+
+        // Get the clips data from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const clipsData = urlParams.get('clips');
+        const videoName = urlParams.get('videoName');
+
+        if (clipsData) {
+            const clips = JSON.parse(decodeURIComponent(clipsData));
+            const videoURL = `uploads/${videoName}`; // Assuming videos are stored in 'uploads' folder
+
+            mainVideo.src = videoURL;
+            displayClips(clips, videoURL);
+        } else {
+            clipSuggestions.innerHTML = "<p>No clips found.</p>";
+        }
+
+        function displayClips(clips, videoURL) {
+            clipSuggestions.innerHTML = '<h2>Suggested Viral Clips</h2>';
+
+            clips.forEach(clip => {
+                const clipDiv = document.createElement('div');
+                clipDiv.innerHTML = `<p>Start: ${clip.start.toFixed(2)}, End: ${clip.end.toFixed(2)}</p>
+                                     <video src="${videoURL}#t=${clip.start.toFixed(2)},${clip.end.toFixed(2)}" controls width="320"></video>
+                                     <a href="${videoURL}#t=${clip.start.toFixed(2)},${clip.end.toFixed(2)}" download="clip_${clip.start.toFixed(2)}-${clip.end.toFixed(2)}.mp4">Download Clip</a>`;
+                clipSuggestions.appendChild(clipDiv);
+            });
+        }
+    </script>
+</body>
+</html>
